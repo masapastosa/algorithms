@@ -18,6 +18,8 @@ int atoi(std::string str) {
         } else break;
     }
 
+    if (negative) res = -res;
+
     return res;
 }
 
