@@ -11,6 +11,17 @@ meta_block_t *find_free_block(meta_block_t **last, size_t size) {
         *last = curr;
         curr = curr->next;
     }
+    if (curr && (curr->size - size) > MIN_SPLIT_VALUE) {
+        // If the new block is > 16 bytes than requestes size, create a new block
+        uint8_t *ptr = (uint8_t*)(curr + 1);
+        meta_block_t *new_block = (meta_block_t *)(ptr + size);
+        new_block->size = curr->size - size - META_SIZE;
+        new_block->next = curr->next;
+        new_block->free = 1;
+        new_block->magic = 0xffffffff;
+        curr->next = new_block;
+        curr->size = size;
+    }
     return curr;
 }
 
